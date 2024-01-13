@@ -145,34 +145,29 @@ function App(): React.JSX.Element {
     }
   };
 
-  useEffect(() => {
-    checkLocationPermission();
-  }, []);
-
   return (
     <SafeAreaView style={backgroundStyle}>
-      {hasLocationPermission ?
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <SearchBarSection title="Next Bus">
-            Where are you going?
-          </SearchBarSection>
-          <MapView
-            style={{ width: '100%', height: '95%' }}
-            showsUserLocation={true}
-            showsMyLocationButton={true}
-            initialRegion={{
-              latitude: 51.5014,
-              longitude: -0.1419,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }} />
-        </View>
-        : <View>
-          <Button onPress={requestLocationPermission}>Request Location Permission</Button>
-        </View>}
+      {!hasLocationPermission && <View>
+        <Button onPress={requestLocationPermission}>Request Location Permission</Button>
+      </View>}
+      <View
+        style={{
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        }}>
+        <SearchBarSection title="Next Bus">
+          Where are you going?
+        </SearchBarSection>
+        <MapView
+          style={{ width: '100%', height: '95%' }}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
+          initialRegion={{
+            latitude: 51.5014,
+            longitude: -0.1419,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }} />
+      </View>
     </SafeAreaView>
   );
 }
