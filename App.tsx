@@ -5,32 +5,36 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useState } from 'react';
+import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
 
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import MapView from 'react-native-maps';
+
+import { enableLatestRenderer } from 'react-native-maps';
+import { Icon, SearchBar } from '@rneui/themed';
+enableLatestRenderer();
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+function SearchBarSection({ children, title }: SectionProps): React.JSX.Element {
+  // const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = false;
+  const [searchBarText, setSearchBarText] = useState('')
+  const updateSearch = (search: string) => {
+    setSearchBarText(search)
+  }
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -51,12 +55,23 @@ function Section({children, title}: SectionProps): React.JSX.Element {
         ]}>
         {children}
       </Text>
-    </View>
+      <SearchBar
+        placeholder="Search for bus stops"
+        onChangeText={updateSearch}
+        value={searchBarText}
+        round={true}
+        lightTheme={true}
+        searchIcon={<Icon name="search" type="font-awesome" color="#86939e" />}
+        inputContainerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+        containerStyle={{ backgroundColor: 'lightgrey', borderRadius: 10 }}
+      />
+    </View >
   );
 }
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  // const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = false;
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -64,34 +79,25 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <View
+        style={{
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        }}>
+        <SearchBarSection title="Next Bus">
+          Where are you going?
+        </SearchBarSection>
+        <MapView
+          style={{ width: '100%', height: '95%' }}
+          initialRegion={{
+            latitude: 51.5014,
+            longitude: -0.1419,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.1,
+          }} />
+      </View>
+      <View>
+        <Text>Test</Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -99,7 +105,8 @@ function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
-    paddingHorizontal: 24,
+    marginBottom: 32,
+    marginHorizontal: 24,
   },
   sectionTitle: {
     fontSize: 24,
@@ -107,6 +114,7 @@ const styles = StyleSheet.create({
   },
   sectionDescription: {
     marginTop: 8,
+    marginBottom: 15,
     fontSize: 18,
     fontWeight: '400',
   },
