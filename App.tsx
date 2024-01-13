@@ -71,31 +71,6 @@ function SearchBarSection({ children, title }: SectionProps): React.JSX.Element 
   );
 }
 
-const requestLocationPermission = async () => {
-  console.log("Requesting location permission");
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'NextBus Location Permission',
-        message:
-          'NextBus needs access to your location ' +
-          'so you can find yourself on the map more easily.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the location');
-    } else {
-      console.log('Location permission denied');
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-};
-
 function App(): React.JSX.Element {
   const isDarkMode = false;
 
@@ -145,20 +120,24 @@ function App(): React.JSX.Element {
     }
   };
 
+  useEffect(() => {
+    checkLocationPermission();
+  });
+
   return (
     <SafeAreaView style={backgroundStyle}>
-      {!hasLocationPermission && <View>
-        <Button onPress={requestLocationPermission}>Request Location Permission</Button>
-      </View>}
       <View
         style={{
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
         }}>
+        {!hasLocationPermission && <View>
+          <Button onPress={requestLocationPermission}>Request Location Permission</Button>
+        </View>}
         <SearchBarSection title="Next Bus">
           Where are you going?
         </SearchBarSection>
         <MapView
-          style={{ width: '100%', height: '95%' }}
+          style={{ width: '100%', height: '80%' }}
           showsUserLocation={true}
           showsMyLocationButton={true}
           initialRegion={{
